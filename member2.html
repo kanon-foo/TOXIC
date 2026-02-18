@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NEWS</title>
+  <style>
+    :root {
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      color: #fff;
+      background: #000; /* 背景を黒に固定 */
+      text-align: center;
+    }
+    header {
+      background: #222;
+      color: #fff;
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      padding: 6px 70px 6px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 56px;
+    }
+    .site-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 0 1 auto;
+    }
+
+    /* ハンバーガーメニュー */
+    .hamburger {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border: 0;
+      background: transparent;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      z-index: 51;
+      flex-shrink: 0;
+      transform-origin: center;
+    }
+    .hamburger:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
+    .hamburger .bar {
+      width: 24px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+      transition: transform 0.25s ease, opacity 0.18s ease;
+      transform-origin: center;
+    }
+    .hamburger.open .bar:nth-child(1) {
+      transform: translateY(5px) rotate(45deg);
+    }
+    .hamburger.open .bar:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.open .bar:nth-child(3) {
+      transform: translateY(-5px) rotate(-45deg);
+    }
+
+    /* オーバーレイメニュー */
+    .overlay {
+      position: absolute;
+      right: 10px;
+      top: 56px;
+      background: #fff;
+      color: #222;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 0;
+      z-index: 50;
+      min-width: 140px;
+    }
+    .overlay a {
+      display: block;
+      padding: 10px 16px;
+      text-align: center;
+      color: #222;
+      text-decoration: none;
+      font-weight: 700;
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      font-size: 1rem;
+    }
+    .overlay a:hover {
+      background: #f5f5f5;
+    }
+    .overlay a:last-child {
+      border-bottom: none;
+    }
+    .overlay.show {
+      display: flex;
+    }
+    .article-container {
+      max-width: 90%;
+      margin: 16px auto;
+      padding: 16px;
+      background: #222;
+      border-radius: 12px;
+      border: 1px solid #444;
+      text-align: left;
+      opacity: 0;
+      transform: translateY(50px);
+      animation: floatIn 1s ease forwards;
+    }
+    .article-title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 16px;
+      opacity: 0;
+      transform: translateY(50px);
+      animation: floatIn 1s ease forwards;
+      animation-delay: 0.5s;
+    }
+    .article-content {
+      font-size: 1rem;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(50px);
+      animation: floatIn 1s ease forwards;
+      animation-delay: 1s;
+    }
+    .article-content a {
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .article-content a:hover {
+      color: #ffcc00;
+    }
+    .back-to-list {
+      display: inline-block;
+      margin-top: 24px;
+      padding: 12px 24px;
+      background: #222;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      border: 1px solid #444;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+    .back-to-list:hover {
+      background: #ffcc00;
+      color: #000;
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* レスポンシブコンテナ */
+    .responsive-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .responsive-container img {
+      max-width: 100%;
+      height: auto;
+    }
+    .responsive-container .text {
+      margin-left: 20px;
+      font-size: 2rem; /* Increased font size */
+      font-weight: normal; /* Changed from bold to normal */
+    }
+    .responsive-container .text div {
+      font-size: 0.9rem; /* Reduced font size */
+    }
+
+    @media (min-width: 601px) {
+      .responsive-container img {
+        max-width: 40%; /* Further reduce size for desktop */
+      }
+    }
+
+    @media (max-width: 600px) {
+      .responsive-container {
+        flex-direction: column;
+        text-align: center;
+      }
+      .responsive-container .text {
+        margin-left: 0;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <button class="hamburger" id="hamburger" aria-controls="menu" aria-expanded="false" aria-label="メニュー">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <div class="site-title">TOXIC official.site</div>
+      <nav class="overlay" id="menu" aria-hidden="true">
+        <a href="index169.html">TOP</a>
+        <a href="news_summary.html">NEWS</a>
+        <a href="profile_summary.html">PROFILE</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="article-container">
+      <h1 class="article-title"></h1>
+      <div class="article-content">
+        <div class="responsive-container">
+          <img src="images/B.png" alt="B画像">
+          <div class="text">
+            <ruby>
+              二<rt>したなが</rt>
+            </ruby>
+            <ruby>
+              双四郎<rt>そうしろう</rt>
+            </ruby>
+            <div>生年月日：2004.10.3</div>
+            <div>血液型：Ｏ型</div>
+          </div>
+        </div>
+        <p style="text-align: center;">
+          <a href="profile_summary.html" class="back-to-list">戻る</a>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const hamburger = document.getElementById("hamburger");
+    const menu = document.getElementById("menu");
+
+    // ハンバーガーメニューの動作
+    hamburger.addEventListener("click", () => {
+      const show = menu.classList.toggle("show");
+      menu.setAttribute("aria-hidden", String(!show));
+      hamburger.setAttribute("aria-expanded", String(show));
+      hamburger.classList.toggle("open", show);
+    });
+
+    // メニュー外クリックで閉じる
+    document.addEventListener("click", (e) => {
+      if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+        if (menu.classList.contains("show")) {
+          menu.classList.remove("show");
+          menu.setAttribute("aria-hidden", "true");
+          hamburger.setAttribute("aria-expanded", "false");
+          hamburger.classList.remove("open");
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PROFILEまとめ</title>
+  <style>
+    body {
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #000;
+      color: #fff;
+    }
+    header {
+      background: #222;
+      color: #fff;
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 70px 6px 16px;
+      min-height: 56px;
+    }
+    .site-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 0 1 auto;
+    }
+
+    /* ハンバーガーメニュー */
+    .hamburger {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border: 0;
+      background: transparent;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      z-index: 51;
+      flex-shrink: 0;
+      transform-origin: center;
+    }
+    .hamburger:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
+    .hamburger .bar {
+      width: 24px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+      transition: transform 0.25s ease, opacity 0.18s ease;
+      transform-origin: center;
+    }
+    .hamburger.open .bar:nth-child(1) {
+      transform: translateY(5px) rotate(45deg);
+    }
+    .hamburger.open .bar:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.open .bar:nth-child(3) {
+      transform: translateY(-5px) rotate(-45deg);
+    }
+
+    /* オーバーレイメニュー */
+    .overlay {
+      position: absolute;
+      right: 10px;
+      top: 56px;
+      background: #fff;
+      color: #222;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 0;
+      z-index: 50;
+      min-width: 140px;
+    }
+    .overlay a {
+      display: block;
+      padding: 10px 16px;
+      text-align: center;
+      color: #222;
+      text-decoration: none;
+      font-weight: 700;
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      font-size: 1rem;
+    }
+    .overlay a:hover {
+      background: #f5f5f5;
+    }
+    .overlay.show {
+      display: flex;
+    }
+
+    /* フロートインアニメーション */
+    @keyframes scrollFloatIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .scroll-float-in {
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .scroll-float-in.visible {
+      animation: scrollFloatIn 0.8s ease forwards;
+    }
+
+    .scroll-float-in {
+      animation: floatIn 1s ease forwards;
+    }
+    .scroll-float-in.delay {
+      animation-delay: 0.5s;
+    }
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    main {
+      max-width: 90%;
+      margin: 16px auto;
+      padding: 16px;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    ul li {
+      margin: 8px 0;
+    }
+    ul li a {
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    ul li a:hover {
+      color: #ffcc00;
+    }
+    .back-to-top {
+      display: inline-block;
+      margin-top: 24px;
+      padding: 12px 24px;
+      background: #222;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      border: 1px solid #444;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+    .back-to-top:hover {
+      background: #ffcc00;
+      color: #000;
+    }
+    img.click-darken {
+      transition: filter 0.3s ease;
+    }
+    img.click-darken:hover, img.click-darken:active {
+      filter: brightness(70%);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="site-title">TOXIC official.site</div>
+      <button class="hamburger" id="hamburger" aria-controls="menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <nav class="overlay" id="menu" aria-hidden="true">
+        <a href="index169.html">TOP</a>
+        <a href="news_summary.html">NEWS</a>
+        <a href="profile_summary.html">PROFILE</a>
+        <a href="fanclub_summary.html">FANCLUB</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <h1 class="scroll-float-in">PROFILE</h1>
+    <div style="text-align: center; margin: 20px 0;" class="scroll-float-in">
+      <img src="images/集合.jpeg" alt="集合写真" style="max-width: 100%; height: auto;">
+    </div>
+    <p class="scroll-float-in" style="text-align: center; color: #fff; font-size: 1rem; line-height: 1.6; margin: 20px;">
+      TOXICは数々の有名アーティストを輩出したSTARGAZERエンターテインメント所属の2人組ボーイズグループ。<br>
+      2026年2月にファーストアルバム「To You」でデビューを果たした。彼らはメンバー自ら作詞・作曲・プロデュースを手掛けている。
+    </p>
+    <div style="text-align: center; margin: 20px 0;" class="scroll-float-in delay">
+      <a href="member1.html">
+        <img src="images/A.png" alt="A画像" class="click-darken" style="width: 45%; height: auto; display: inline-block; margin: 0 2%;">
+      </a>
+      <a href="member2.html">
+        <img src="images/B.png" alt="B画像" class="click-darken" style="width: 45%; height: auto; display: inline-block; margin: 0 2%;">
+      </a>
+    </div>
+    <ul>
+    </ul>
+    <p style="text-align: center;">
+      <a href="index169.html" class="back-to-top">TOPに戻る</a>
+    </p>  </main>
+  <script>
+    // ハンバーガーメニューのトグル
+    const hamburger = document.getElementById('hamburger');
+    const menu = document.getElementById('menu');
+
+    hamburger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.classList.toggle('show');
+      hamburger.classList.toggle('open');
+    });
+
+    // 外側クリックでメニュー閉じる
+    document.addEventListener('click', () => {
+      menu.classList.remove('show');
+      hamburger.classList.remove('open');
+    });
+
+    // フロートインアニメーションの実装
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // フロートイン対象要素を監視
+    document.querySelectorAll('.scroll-float-in').forEach((el) => {
+      observer.observe(el);
+    });
+
+    // ページ読み込み時にスクロール位置を最上部に
+    window.scrollTo(0, 0);
+  </script>
+</body>
+</html>

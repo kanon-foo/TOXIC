@@ -1,0 +1,477 @@
+﻿<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TOXIC OFFICIAL</title>
+  <style>
+    :root {
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      --primary-color: #fff; /* Ensure primary color is defined */
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      color: #fff;
+      background: #000; /* 背景を黒に固定 */
+      text-align: center;
+    }
+    header {
+      background: #222;
+      color: #fff;
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 70px 6px 16px;
+      min-height: 56px;
+    }
+    .site-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 0 1 auto;
+    }
+
+    /* ローディング画面 */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 1;
+      animation: fadeOutBackground 1s ease-in-out 2s forwards; /* 2秒後にフェードアウト開始 */
+    }
+
+    @keyframes fadeOutBackground {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    .loading-text {
+      color: white;
+      font-size: 3rem;
+      font-weight: bold;
+      opacity: 0;
+      animation: fadeIn 2s ease-in-out forwards, fadeOutText 1s ease-in-out 2s forwards; /* 2秒後にフェードアウト開始 */
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOutText {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    /* フロートインアニメーション */
+    @keyframes scrollFloatIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .scroll-float-in {
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .scroll-float-in.visible {
+      animation: scrollFloatIn 0.8s ease forwards;
+    }
+
+    /* 縦長画像のスタイル */
+    .vertical-image {
+      max-width: 100%; /* Ensure the image does not stretch beyond its natural width */
+      height: auto; /* Maintain the aspect ratio */
+      max-height: 80vh; /* Limit the height to fit within the viewport */
+      margin: 16px auto; /* Center the image */
+      display: block;
+      animation: fadeInImage 2s ease-in-out forwards; /* 集合画像のフェードインアニメーション */
+    }
+
+    @keyframes fadeInImage {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* セクションのスタイル */
+    section {
+      max-width: 90%; /* 横幅を画面幅の90%に調整 */
+      margin: 16px auto; /* 中央揃え */
+      padding: 16px;
+      background: #222; /* 背景色を濃いグレーに */
+      border-radius: 12px; /* 角丸 */
+      border: 1px solid #444; /* 枠線 */
+    }
+    section h2 {
+      margin: 0 0 16px;
+      font-size: 1.5rem;
+      color: #fff;
+    }
+    section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    section ul li {
+      margin: 8px 0;
+    }
+    section ul li a {
+      color: #fff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    section ul li a:hover {
+      background: linear-gradient(to right, purple, lightblue);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ハンバーガーメニュー */
+    .hamburger {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1100;
+      will-change: transform; /* Optimize GPU rendering */
+    }
+
+    .hamburger .bar {
+      width: 30px;
+      height: 3px;
+      background: var(--primary-color);
+      margin: 4px 0;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform-origin: center; /* Ensure proper rotation origin */
+      will-change: transform, opacity; /* Optimize GPU rendering */
+    }
+
+    .hamburger.open .bar:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px); /* Rotate first, then translate */
+    }
+
+    .hamburger.open .bar:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.open .bar:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px); /* Rotate first, then translate */
+    }
+
+    /* オーバーレイメニュー */
+    .overlay {
+      position: absolute;
+      right: 10px;
+      top: 56px;
+      background: #fff;
+      color: #222;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 0;
+      z-index: 50;
+      min-width: 140px;
+    }
+    .overlay a {
+      display: block;
+      padding: 10px 16px;
+      text-align: center;
+      color: #222;
+      text-decoration: none;
+      font-weight: 700;
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      font-size: 1rem;
+    }
+    .overlay a:hover {
+      background: #f5f5f5;
+    }
+    .overlay.show {
+      display: flex;
+    }
+
+    .loading-logo {
+      width: 120px; /* サイズを小さく設定 */
+      height: auto;
+      opacity: 0;
+      animation: fadeInLogo 2s ease-in-out forwards; /* フェードインアニメーション */
+    }
+
+    @keyframes fadeInLogo {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .neon-logo {
+      animation: neonGlow 1.5s infinite alternate;
+    }
+
+    @keyframes neonGlow {
+      from {
+        filter: drop-shadow(0 0 5px #ff00ff) drop-shadow(0 0 10px #ff00ff) drop-shadow(0 0 20px #ff00ff);
+      }
+      to {
+        filter: drop-shadow(0 0 10px #00ffff) drop-shadow(0 0 20px #00ffff) drop-shadow(0 0 30px #00ffff);
+      }
+    }
+
+    /* ソーシャルメディアアイコン */
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+    }
+    .social-icons a {
+      margin: 0 12px; /* Adjust spacing between icons */
+    }
+    .social-icons img {
+      width: 36px; /* Slightly increase size further */
+      height: 36px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- ローディング画面 -->
+  <div class="loading-screen" id="loading-screen">
+    <img src="rogo.png" alt="TOXIC logo" class="loading-logo">
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <button class="hamburger" id="hamburger" aria-controls="menu" aria-expanded="false" aria-label="メニュー">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <div class="site-title">TOXIC official.site</div>
+      <nav class="overlay" id="menu" aria-hidden="true">
+        <a href="news_summary.html">NEWS</a>
+        <a href="profile_summary.html">PROFILE</a>
+        <a href="fanclub_summary.html">FANCLUB</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- 縦長画像 -->
+    <div>
+      <img class="vertical-image" src="images/集合.jpeg" alt="集合写真">
+    </div>
+
+    <!-- 説明文 -->
+    <section class="scroll-float-in" style="background: #000; color: #fff; border: none; padding: 24px 16px; line-height: 1.8;">
+      <p style="margin: 0; font-size: 1rem;">
+        TOXICは数々の有名アーティストを輩出したSTARGAZERエンターテインメント所属の2人組ボーイズグループ。<br>
+        2026年2月にファーストアルバム「To You」でデビューを果たした。彼らはメンバー自ら作詞・作曲・プロデュースを手掛けている。
+      </p>
+    </section>
+
+    <!-- NEWS -->
+    <section id="news" class="scroll-float-in">
+      <h2>NEWS</h2>
+      <ul>
+        <li><a href="news1.html">サンプル1</a></li>
+        <li><a href="news2.html">TOXIC 1st ALBUM『To You』予約販売開始!!</a></li>
+        <li><a href="news3.html">サンプル3</a></li>
+        <li><a href="news4.html">TOXIC 重大なお知らせ</a></li>
+        <li><a href="news5.html">ファンクラブ限定動画更新！</a></li>
+        <li><a href="news6.html">シャッキリにおけるsousirou の不適切な言動について</a></li>
+        <li><a href="news7.html">TOXIC シャッキリ 出演決定！</a></li>
+        <li><a href="news8.html">『VENOM』・『For you 』のDance Practice動画公開！</a></li>
+        <li><a href="news9.html">イワシのホントでっかTVにおけるhajimeの不適切な言動について</a></li>
+        <li><a href="news10.html">リード曲 『For you』配信開始！</a></li>
+        <li><a href="news11.html">タイトル曲 『VENOM』MV公開！</a></li>
+        <li><a href="news12.html">hajime Vlog更新！</a></li>
+        <li><a href="news13.html">TOXIC イワシのホントでっかTVに出演決定！</a></li>
+        <li><a href="news14.html">TOXIC オフィシャルファンクラブ開設！</a></li>
+        <li><a href="news15.html">TOXIC デビューライブ開催！</a></li>
+        <li><a href="news16.html">TOXIC デビューのご案内</a></li>
+      </ul>
+    </section>
+
+    <!-- Added social media icons above footer -->
+    <div class="social-icons">
+      <a href="#" id="close-icon">
+        <img src="images/x.png" alt="Close">
+      </a>
+      <a href="https://www.instagram.com" target="_blank">
+        <img src="images/inst.png" alt="Instagram">
+      </a>
+      <a href="https://www.youtube.com" target="_blank">
+        <img src="images/youtube.png" alt="YouTube">
+      </a>
+    </div>
+
+    <footer style="margin: 40px 0 60px; color: #666; text-align: center;">
+      事務所名：サンプル事務所
+    </footer>
+
+    <script>
+      // ページロード時に最上部を確保し、スクロール禁止
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      document.body.style.overflow = "hidden";
+      window.scrollTo(0, 0);
+
+      // Remove the TOXIC sample image section
+      // Ensure the loading animation only shows on the first visit
+      const loadingScreen = document.getElementById("loading-screen");
+      const hasVisited = sessionStorage.getItem("hasVisited");
+
+      if (!hasVisited) {
+        sessionStorage.setItem("hasVisited", "true");
+        window.addEventListener("load", () => {
+          setTimeout(() => {
+            loadingScreen.style.display = "none";
+            document.body.style.overflow = "auto"; // スクロール許可
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+            window.scrollTo(0, 0); // ローディング画面終了後に最上部へスクロール
+          }, 3000);
+        });
+      } else {
+        loadingScreen.style.display = "none";
+        document.body.style.overflow = "auto"; // スクロール許可
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        window.scrollTo(0, 0); // 2回目以降も最上部へスクロール
+      }
+
+      // DOMContentLoaded でも確保
+      document.addEventListener("DOMContentLoaded", function() {
+        window.scrollTo(0, 0);
+      });
+
+      // Apply float-in animations for all sections except header, footer, and top image
+      const floatInElements = document.querySelectorAll("main section, .scroll-float-in");
+      const handleScroll = () => {
+        floatInElements.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            el.classList.add("visible");
+          }
+        });
+      };
+
+      window.addEventListener("scroll", handleScroll);
+      window.addEventListener("load", handleScroll);
+
+      // Update footer text
+      try {
+        const footer = document.querySelector("footer");
+        if (footer) {
+          footer.textContent = "STARGAZER entertainment";
+        }
+      } catch (e) {
+        console.warn("Footer update error:", e);
+      }
+
+      const hamburger = document.getElementById("hamburger");
+      const menu = document.getElementById("menu");
+
+      // ハンバーガーメニューの開閉（クリックイベントで直接制御）
+      hamburger.addEventListener("click", function(e) {
+        e.stopPropagation(); // イベント伝播を止める
+        const isOpen = menu.classList.toggle("show");
+        hamburger.classList.toggle("open", isOpen);
+        menu.setAttribute("aria-hidden", String(!isOpen));
+        hamburger.setAttribute("aria-expanded", String(isOpen));
+      });
+
+      // メニュー内リンククリック時の処理
+      const menuLinks = document.querySelectorAll("#menu a");
+      menuLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const href = link.getAttribute("href");
+          
+          // ページ遷移
+          window.location.href = href;
+        });
+      });
+
+      // メニュー外クリックで閉じる
+      document.addEventListener("click", function(e){
+        if(!menu.contains(e.target) && !hamburger.contains(e.target)){
+          if(menu.classList.contains("show")){
+            menu.classList.remove("show");
+            hamburger.classList.remove("open");
+            menu.setAttribute("aria-hidden", "true");
+            hamburger.setAttribute("aria-expanded", "false");
+          }
+        }
+      });
+
+      // JavaScript adjustments for touch devices
+      document.addEventListener("DOMContentLoaded", () => {
+        hamburger.addEventListener("touchstart", (e) => {
+          e.preventDefault();
+          hamburger.click();
+        });
+
+        // Ensure proper handling on iOS Safari
+        document.body.style.webkitTapHighlightColor = "transparent"; /* Disable highlight on tap */
+      });
+    </script>
+</body>
+</html>
